@@ -106,7 +106,7 @@ class PostType extends GraphQLType
                     'type' =>  Type::string(),
                 ],
                 'avatar_url' => [
-                    'type' => Type::listOf($catType),
+                    'type' => Type::listOf(Type::string()),
                 ],
                 'meta' => [
                     'type' =>  Type::listOf(Type::string()),
@@ -114,6 +114,122 @@ class PostType extends GraphQLType
                 '_links' => [
                     'type' =>  Type::string(),
                 ]
+            ]
+        ]);
+
+        $size = new ObjectType([
+            'name' => 'Image_file_sizes',
+            'description' => 'Image file sizes (thumbnail, medium, etc.)',
+            'fields' => [
+                'file' => [
+                    'type' => Type::string(),
+                ],
+                'width' => [
+                    'type' => Type::int(),
+                ],
+                'height' => [
+                    'type' =>  Type::int(),
+                ],
+                'mime_type' => [
+                    'type' =>  Type::string(),
+                ],
+                'source_url' => [
+                    'type' =>  Type::string(),
+                ]
+            ]
+        ]);
+
+        $sizes = new ObjectType([
+            'name' => 'List_image_sizes',
+            'description' => 'Image file sizes (thumbnail, medium, etc.)',
+            'fields' => [
+                'thumbnail' => [
+                    'type' => $size,
+                ],
+                'medium' => [
+                    'type' => $size,
+                ],
+                'medium_large' => [
+                    'type' => $size,
+                ],
+                'large' => [
+                    'type' =>  $size,
+                ],
+                'full' => [
+                    'type' =>  $size,
+                ]
+            ]
+        ]);
+
+        $media_details  = new ObjectType([
+            'name' => 'Media_details',
+            'description' => 'Media details',
+            'fields' => [
+                'width' => [
+                    'type' => Type::int(),
+                ],
+                'height' => [
+                    'type' =>  Type::int(),
+                ],
+                'file' => [
+                    'type' =>  Type::string(),
+                ],
+                'sizes' => [
+                    'type' => $sizes,
+                ]
+            ]
+        ]);
+
+      
+
+        $featuredImage = new ObjectType([
+            'name' => 'Image_details',
+            'description' => 'Featured image details',
+            'fields' => [
+                'id' => [
+                    'type' => Type::int(),
+                ],
+                'date' => [
+                    'type' => Type::string(),
+                ],
+                'date_gmt' => [
+                    'type' =>  Type::string(),
+                ],
+                'modified' => [
+                    'type' =>  Type::string(),
+                ],
+                'modified_gmt' => [
+                    'type' =>  Type::string(),
+                ],
+                'slug' => [
+                    'type' =>  Type::string(),
+                ],
+                'type' => [
+                    'type' => Type::string(),
+                ],
+                'url' => [
+                    'type' => Type::string(),
+                    'resolve' => function($post, $args) {
+                        return $post->guid->rendered;
+                    }
+                ],
+                'media_type' => [
+                    'type' => Type::string(),
+                ],
+                'mime_type' => [
+                    'type' => Type::string(),
+                ],
+                'description' => [
+                    'type' => Type::string(),
+                    'resolve' => function($post, $args) {
+                        return $post->description->rendered;
+                    }
+                ],
+                'media_details' => [
+                    'type' => $media_details,
+                ]
+                
+
             ]
         ]);
 
@@ -162,6 +278,14 @@ class PostType extends GraphQLType
             ],
             "featured_media" => [
                 'type' => Type::nonNull(Type::int()),
+            ],
+            "featured_image_info" => [
+                'type' => $featuredImage,
+                'resolve' => function($post, $args) {
+                    $client = new \GuzzleHttp\Client();
+                    $res = $client->request('GET', env('WP_API_URL') . '/media/' . $post->featured_media, [ ]);
+                    return json_decode($res->getBody());
+                }
             ],
             "comment_status" => [
                 'type' => Type::nonNull(Type::string()),
