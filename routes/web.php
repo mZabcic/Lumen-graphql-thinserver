@@ -17,7 +17,7 @@ $router->get('/', function () use ($router) {
 
 
 
-//$router->get('posts', [
-//    'as' => 'posts', 'uses' => 'App\Http\Controllers\Controller@posts'
-//]);
+$router->get('posts', [
+    'as' => 'posts', 'uses' => 'App\Http\Controllers\Controller@posts'
+]);
 
