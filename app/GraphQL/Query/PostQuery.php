@@ -33,8 +33,6 @@ class PostQuery extends Query
         $res = $client->request('GET', env('WP_API_URL') . '/posts', [
         ]);
         $body = json_decode($res->getBody());
-        $cat_info = array();
-        $authors = array();
         foreach ($body as $element) {
          /*   if (sizeof($element->categories) > 0) {
                 $cats = $element->categories;
