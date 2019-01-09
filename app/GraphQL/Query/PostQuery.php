@@ -30,7 +30,7 @@ class PostQuery extends Query
     {
 
         $client = new \GuzzleHttp\Client();
-        $res = $client->request('GET', env('WP_API_URL') . '/posts', [
+        $res = $client->request('GET', env('WP_API_URL') . '/posts?filter[posts_per_page]=-1', [
         ]);
         $body = json_decode($res->getBody());
         foreach ($body as $element) {
