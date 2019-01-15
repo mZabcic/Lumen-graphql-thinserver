@@ -18,23 +18,37 @@ class PostQuery extends Query
     public function args()
     {
         return [
+            'page' => ['name' => 'page', 'type' => Type::int()],
             'id' => ['name' => 'id', 'type' => Type::int()],
             'slug' => ['name' => 'slug', 'type' => Type::string()],
             'status' => ['name' => 'status', 'type' => Type::string()],
             'type' => ['name' => 'type', 'type' => Type::string()],
-            'categories' => ['name' => 'categories', 'type' => Type::int()],
+            'categories' => ['name' => 'categories', 'type' => Type::string()],
             's' => ['name' => 's', 'type' => Type::string()],
+            'per_page' => ['name' => 'per_page', 'type' => Type::int()],
+            'categories_exclude' => ['name' => 'categories_exclude', 'type' => Type::string()],
+            'tags' => ['name' => 'tags', 'type' => Type::string()],
+            'tags_exclude' => ['name' => 'tags_exclude', 'type' => Type::string()],
+            'order' => ['name' => 'order', 'type' => Type::string()],
+            'orderby' => ['name' => 'orderby', 'type' => Type::string()],
+            'offset' => ['name' => 'offset', 'type' => Type::string()],
+            'include' => ['name' => 'include', 'type' => Type::string()],
         ];
     }
     public function resolve($root, $args)
     {
-
+        $args['page'] = array_key_exists ("page" , $args ) ? $args['page'] : 1;
+        $queryParams = "";
+        foreach ($args as $key => $value) {
+            if ($key != 'page')
+                $queryParams .= "&" . $key . "=" . $value;
+        }
         $client = new \GuzzleHttp\Client();
-        $res = $client->request('GET', env('WP_API_URL') . '/posts?filter[posts_per_page]=-1', [
+        $res = $client->request('GET', env('WP_API_URL') . '/posts?page=' . $args['page'] . $queryParams, [
         ]);
         $body = json_decode($res->getBody());
-        foreach ($body as $element) {
-         /*   if (sizeof($element->categories) > 0) {
+        /*foreach ($body as $element) {
+            if (sizeof($element->categories) > 0) {
                 $cats = $element->categories;
                 $cat_data = [];
                 foreach ($cats as $cat_id) {
@@ -57,8 +71,8 @@ class PostQuery extends Query
                 $res_body = json_decode($res_user->getBody());
                 $element->author_object = $res_body;
                 $authors[$element->author] = $res_body;
-            } */
-        }
+            } 
+        } */
         return $body;
     }
 }

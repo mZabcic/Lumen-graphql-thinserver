@@ -265,7 +265,10 @@ class PostType extends GraphQLType
                 'type' => Type::nonNull(Type::string()),
             ],
             "title" => [
-                'type' => Type::nonNull(Type::string()),
+                'type' => Type::string(),
+                'resolve' => function($post, $args) {
+                    return $post->title->rendered;
+                }
             ],
             "content" => [
                 'type' => $contentType,

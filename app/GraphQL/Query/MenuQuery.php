@@ -25,7 +25,7 @@ class MenuQuery extends Query
     {
 
         $client = new \GuzzleHttp\Client();
-        $res = $client->request('GET', env('WP_API_MENU_URL') . '/' .  $args['slug'] . '?filter[posts_per_page]=-1', [
+        $res = $client->request('GET', env('WP_API_MENU_URL') . '/' .  $args['slug'], [
         ]);
         $body = json_decode($res->getBody());
         $body = array($body);
