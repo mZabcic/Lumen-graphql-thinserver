@@ -94,7 +94,9 @@ return [
         'default' => [
             'query' => [
                 'posts' => 'App\GraphQL\Query\PostQuery',
-                'menus' => 'App\GraphQL\Query\MenuQuery'
+                'menus' => 'App\GraphQL\Query\MenuQuery',
+                'categories' => 'App\GraphQL\Query\CategoryQuery',
+                'comments' => 'App\GraphQL\Query\CommentsQuery'
             ],
             'mutation' => [
 
@@ -121,6 +123,8 @@ return [
     'types' => [
         'App\GraphQL\Type\PostType',
         'App\GraphQL\Type\MenuType',
+        'App\GraphQL\Type\CategoryType',
+        'App\GraphQL\Type\CommentType'
     ],
 
     // This callable will received every Error objects for each errors GraphQL catch.

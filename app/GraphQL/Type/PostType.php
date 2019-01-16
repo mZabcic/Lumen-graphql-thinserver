@@ -35,7 +35,7 @@ class PostType extends GraphQLType
         $catType = null;
 
         $catType = new ObjectType([
-            'name' => 'Category',
+            'name' => 'CategoryInUser',
             'description' => 'Category object',
             'fields' => function() use (&$catType) { 
                 return [
@@ -50,6 +50,9 @@ class PostType extends GraphQLType
                 ],
                 'link' => [
                     'type' =>  Type::string(),
+                    'resolve' => function($post, $args) {
+                        return str_replace(env('WP_URL'),"", $post->link);  
+                    }
                 ],
                 'name' => [
                     'type' =>  Type::string(),
@@ -263,6 +266,9 @@ class PostType extends GraphQLType
             ],
             "link" => [
                 'type' => Type::nonNull(Type::string()),
+                'resolve' => function($post, $args) {
+                    return str_replace(env('WP_URL'),"", $post->link);  
+                }
             ],
             "title" => [
                 'type' => Type::string(),
@@ -271,10 +277,16 @@ class PostType extends GraphQLType
                 }
             ],
             "content" => [
-                'type' => $contentType,
+                'type' => Type::string(),
+                'resolve' => function($post, $args) {
+                    return $post->content->rendered;
+                }
             ],
             "excerpt" => [
                     'type' => Type::nonNull(Type::string()),
+                    'resolve' => function($post, $args) {
+                        return $post->excerpt->rendered;
+                    }
             ],
             "author" => [
                 'type' => Type::nonNull(Type::int()),
@@ -317,7 +329,7 @@ class PostType extends GraphQLType
             "_links" => [
                 'type' => Type::nonNull(Type::string()),
             ],
-            'cat_list' => [
+            'categories_object' => [
                 'type' => Type::listOf($catType),
                 'description' => 'List of categoies post is in',
                 'resolve' => function($post, $args) {

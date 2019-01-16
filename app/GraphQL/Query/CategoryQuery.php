@@ -17,22 +17,33 @@ class CategoryQuery extends Query
     }
     public function args()
     {
-        return [
-            'page' => ['name' => 'slug', 'type' => Type::nonNull(Type::int())],
-            'slug' => ['name' => 'slug', 'type' => Type::string()],
-            'id' => ['name' => 'id', 'type' => Type::int()],
-            'child' => ['name' => 'child', 'type' => Type::int()]
-        ];
+            return [
+                'page' => ['name' => 'page', 'type' => Type::int()],
+                'slug' => ['name' => 'slug', 'type' => Type::string()],
+                'exclude' => ['name' => 'exclude', 'type' => Type::string()],
+                'search' => ['name' => 'search', 'type' => Type::string()],
+                'per_page' => ['name' => 'per_page', 'type' => Type::int()],
+                'post' => ['name' => 'post', 'type' => Type::int()],
+                'parent' => ['name' => 'parent', 'type' => Type::int()],
+                'hide_empty' => ['name' => 'hide_empty', 'type' => Type::int()],
+                'order' => ['name' => 'order', 'type' => Type::string()],
+                'orderby' => ['name' => 'orderby', 'type' => Type::string()],
+                'include' => ['name' => 'include', 'type' => Type::string()],
+            ];
+        
     }
     public function resolve($root, $args)
     {
+        $args['page'] = array_key_exists ("page" , $args ) ? $args['page'] : 1;
+        $queryParams = "";
+        foreach ($args as $key => $value) {
+            if ($key != 'page')
+                $queryParams .= "&" . $key . "=" . $value;
+        } 
         $client = new \GuzzleHttp\Client();
-        $res = $client->request('GET', env('WP_API_MENU_URL') . '/' .  $args['slug'] . '?page=' . $args['page'], [
+        $res = $client->request('GET', env('WP_API_URL') . '/categories?page=' . $args['page'] . $queryParams, [
         ]);
         $body = json_decode($res->getBody());
-        $total = $res->getHeaderLine('X-WP-Total');
-        $total_pages = $res->getHeaderLine('X-WP-TotalPages');
-        $body = array($body);
         return $body;
     }
 }

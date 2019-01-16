@@ -21,9 +21,9 @@ class CategoryType extends GraphQLType
     {
         
         return [
-            "id" => [
-                'type' => Type::nonNull(Type::int())
-            ],
+        "id" => [
+            'type' => Type::nonNull(Type::int())
+        ],
         "count" => [
             'type' => Type::nonNull(Type::int())
         ],
@@ -32,6 +32,9 @@ class CategoryType extends GraphQLType
         ],
         "link" => [
             'type' => Type::nonNull(Type::string()),
+            'resolve' => function($post, $args) {
+                return str_replace(env('WP_URL'),"", $post->link);  
+            }
         ],
         "name" => [
             'type' => Type::nonNull(Type::string()),

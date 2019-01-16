@@ -6,14 +6,14 @@ use GraphQL;
 use GraphQL\Type\Definition\Type;
 use Folklore\GraphQL\Support\Query;
 
-class PostQuery extends Query
+class CommentsQuery extends Query
 {
     protected $attributes = [
-        'name' => 'posts'
+        'name' => 'comments'
     ];
     public function type()
     {
-        return Type::listOf(GraphQL::type('Post'));
+        return Type::listOf(GraphQL::type('Comment'));
     }
     public function args()
     {
@@ -27,13 +27,18 @@ class PostQuery extends Query
             'search' => ['name' => 'search', 'type' => Type::string()],
             'per_page' => ['name' => 'per_page', 'type' => Type::int()],
             'categories_exclude' => ['name' => 'categories_exclude', 'type' => Type::string()],
-            'tags' => ['name' => 'tags', 'type' => Type::string()],
-            'tags_exclude' => ['name' => 'tags_exclude', 'type' => Type::string()],
+            'parent_exclude' => ['name' => 'parent_exclude', 'type' => Type::string()],
+            'after' => ['name' => 'after', 'type' => Type::string()],
             'order' => ['name' => 'order', 'type' => Type::string()],
             'orderby' => ['name' => 'orderby', 'type' => Type::string()],
             'offset' => ['name' => 'offset', 'type' => Type::string()],
             'include' => ['name' => 'include', 'type' => Type::string()],
-        ];
+            'post' => ['name' => 'post', 'type' => Type::string()],
+            'before' => ['name' => 'before', 'type' => Type::string()],
+            'author_email' => ['name' => 'author_email', 'type' => Type::string()],
+            'author_exclude' => ['name' => 'author_exclude', 'type' => Type::string()],
+            'author' => ['name' => 'author', 'type' => Type::string()],
+            ];
     }
     public function resolve($root, $args)
     {
@@ -44,35 +49,9 @@ class PostQuery extends Query
                 $queryParams .= "&" . $key . "=" . $value;
         }
         $client = new \GuzzleHttp\Client();
-        $res = $client->request('GET', env('WP_API_URL') . '/posts?page=' . $args['page'] . $queryParams, [
+        $res = $client->request('GET', env('WP_API_URL') . '/comments?page=' . $args['page'] . $queryParams, [
         ]);
         $body = json_decode($res->getBody());
-        /*foreach ($body as $element) {
-            if (sizeof($element->categories) > 0) {
-                $cats = $element->categories;
-                $cat_data = [];
-                foreach ($cats as $cat_id) {
-                    if (array_key_exists($cat_id, $cat_info)) {
-                        array_push($cat_data, $cat_info[$cat_id]);
-                    }  else {
-                        $res_cat = $client->request('GET', env('WP_API_URL') . '/categories/' . $cat_id, [ ]);
-                        $cat_body = json_decode($res_cat->getBody());
-                        $cat_info[$cat_id] = $cat_body;
-                        array_push($cat_data, $cat_body);
-                    }
-                } 
-            } */
-            //$element->cat_list = $cat_data;
-
-          /*  if (array_key_exists($element->author, $authors)) {
-                $element->author_object = $authors[$element->author];
-            } else {
-                $res_user = $client->request('GET', env('WP_API_URL') . '/users/' . $element->author, [ ]);
-                $res_body = json_decode($res_user->getBody());
-                $element->author_object = $res_body;
-                $authors[$element->author] = $res_body;
-            } 
-        } */
         return $body;
     }
 }
