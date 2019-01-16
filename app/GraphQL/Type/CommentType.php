@@ -23,7 +23,7 @@ class CommentType extends GraphQLType
 
         return [
             "id" => [
-                'type' => Type::nonNull(Type::int()),
+                'type' => Type::int(),
             ],
             "post" => [
                 'type' => Type::int(),
@@ -47,7 +47,7 @@ class CommentType extends GraphQLType
                 'type' => Type::string(),
             ],
             "content" => [
-                'type' => Type::nonNull(Type::string()),
+                'type' => Type::string(),
                 'resolve' => function($post, $args) {
                     return $post->content->rendered;
                 }
@@ -66,7 +66,17 @@ class CommentType extends GraphQLType
             ],
             "meta" => [
                 'type' => Type::listOf(Type::string()),
-            ]
+            ],
+            "children" => [
+                    'type' => Type::listOf(GraphQL::type('Comment')),
+                    'description' => 'Children object',
+                    'resolve' => function($post, $args) {
+                        $client = new \GuzzleHttp\Client();
+                        $res = $client->request('GET', env('WP_API_URL') . '/comments?parent=' . $post->id, [ ]);
+                        return json_decode($res->getBody());
+                    }
+                ]
+            
             
             ];
           

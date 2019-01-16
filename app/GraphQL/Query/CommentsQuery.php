@@ -38,6 +38,7 @@ class CommentsQuery extends Query
             'author_email' => ['name' => 'author_email', 'type' => Type::string()],
             'author_exclude' => ['name' => 'author_exclude', 'type' => Type::string()],
             'author' => ['name' => 'author', 'type' => Type::string()],
+            'parent' => ['name' => 'parent', 'type' => Type::string()]
             ];
     }
     public function resolve($root, $args)
