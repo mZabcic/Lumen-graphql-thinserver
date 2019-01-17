@@ -99,7 +99,7 @@ return [
                 'comments' => 'App\GraphQL\Query\CommentsQuery'
             ],
             'mutation' => [
-
+                'newComment' => 'App\GraphQL\Mutation\CommentMutation'
             ]
             ]
     ],

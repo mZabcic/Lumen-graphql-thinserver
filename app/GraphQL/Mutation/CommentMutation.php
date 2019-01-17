@@ -9,7 +9,7 @@ use App\User;
 class CommentMutation extends Mutation
 {
     protected $attributes = [
-        'name' => 'Comment'
+        'name' => 'newComment'
     ];
 
     public function type()
@@ -20,20 +20,13 @@ class CommentMutation extends Mutation
     public function args()
     {
         return [
-            'post_id' => ['name' => 'post_id', 'type' => Type::int()],
+            'post' => ['name' => 'post', 'type' => Type::nonNull(Type::int())],
             'author_name' => ['name' => 'author_name', 'type' => Type::string()],
             'parent' => ['name' => 'parent', 'type' => Type::int()],
-            'content' => ['name' => 'content', 'type' => Type::string()],
+            'content' => ['name' => 'content', 'type' => Type::nonNull(Type::string())],
         ];
     }
 
-    public function rules()
-    {
-        return [
-            'post_id' => ['required'],
-            'content' => ['required']
-        ];
-    }
 
     public function resolve($root, $args)
     {
@@ -45,13 +38,26 @@ class CommentMutation extends Mutation
         }
         $client = new \GuzzleHttp\Client();
         $res = $client->request('POST', env('WP_API_URL') . '/comments', [
-            ['body' => [
-                'post_id' => $args['post_id'],
-                'author_name' => $args['author_name'],
-                'parent' => $args['required'],
-                'content' => $args['content'],
-            ]]
+            'multipart' => [
+                [
+                    'name'     => 'post',
+                    'contents' => $args['post']
+                ],
+                [
+                    'name'     => 'author_name',
+                    'contents' => $args['author_name']
+                ],
+                [
+                    'name'     => 'parent',
+                    'contents' => $args['parent']
+                ],
+                [
+                    'name'     => 'content',
+                    'contents' => $args['content']
+                ]
+            ]
         ]);
+        
         $body = json_decode($res->getBody());
 
         return $body;
