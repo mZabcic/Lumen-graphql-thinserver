@@ -32,6 +32,19 @@ class PostType extends GraphQLType
             ]
         ]);
 
+        $paginationType = new ObjectType([
+            'name' => 'PostPagination',
+            'description' => 'Post pagination data',
+            'fields' => [
+                'totalPages' => [
+                    'type' => Type::int(),
+                ],
+                'total' => [
+                    'type' => Type::int(),
+                ]
+            ]
+        ]);
+
         $catType = null;
 
         $catType = new ObjectType([
@@ -238,7 +251,7 @@ class PostType extends GraphQLType
 
         return [
             'id' => [
-                'type' => Type::nonNull(Type::int())
+                'type' => Type::int()
             ],
             'date' => [
                 'type' => Type::nonNull(Type::string()),
@@ -351,7 +364,11 @@ class PostType extends GraphQLType
                     $res = $client->request('GET', env('WP_API_URL') . '/users/' . $post->author, [ ]);
                     return json_decode($res->getBody());
                 }
-            ]
+            ],
+            'pagination' => [
+                'type' => $paginationType,
+                'description' => 'Total number'
+            ],
         ];
     }
 }

@@ -5,6 +5,7 @@ namespace App\GraphQL\Query;
 use GraphQL;
 use GraphQL\Type\Definition\Type;
 use Folklore\GraphQL\Support\Query;
+use Closure;
 
 class PostQuery extends Query
 {
@@ -73,6 +74,14 @@ class PostQuery extends Query
                 $authors[$element->author] = $res_body;
             } 
         } */
+        foreach ($body as &$value) {
+            $value->pagination = [
+                'totalPages' => $res->getHeaderLine('X-WP-TotalPages'),
+                'total' => $res->getHeaderLine('X-WP-Total')
+            ];
+        }
+
+        
         return $body;
     }
 }

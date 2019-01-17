@@ -59,7 +59,6 @@ class CommentMutation extends Mutation
         ]);
         
         $body = json_decode($res->getBody());
-
         return $body;
     }
 }

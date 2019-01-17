@@ -44,6 +44,12 @@ class CategoryQuery extends Query
         $res = $client->request('GET', env('WP_API_URL') . '/categories?page=' . $args['page'] . $queryParams, [
         ]);
         $body = json_decode($res->getBody());
+        foreach ($body as &$value) {
+            $value->pagination = [
+                'totalPages' => $res->getHeaderLine('X-WP-TotalPages'),
+                'total' => $res->getHeaderLine('X-WP-Total')
+            ];
+        }
         return $body;
     }
 }

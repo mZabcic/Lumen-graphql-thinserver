@@ -14,12 +14,25 @@ class CommentType extends GraphQLType
         'description' => 'WP comment type'
     ];
 
+    
+
 
  
     
     public function fields()
     {
-       
+        $paginationType = new ObjectType([
+            'name' => 'CommentPagination',
+            'description' => 'Comment pagination data',
+            'fields' => [
+                'totalPages' => [
+                    'type' => Type::int(),
+                ],
+                'total' => [
+                    'type' => Type::int(),
+                ]
+            ]
+        ]);
 
         return [
             "id" => [
@@ -75,6 +88,10 @@ class CommentType extends GraphQLType
                         $res = $client->request('GET', env('WP_API_URL') . '/comments?parent=' . $post->id, [ ]);
                         return json_decode($res->getBody());
                     }
+                ],
+                'pagination' => [
+                    'type' => $paginationType,
+                    'description' => 'Total number'
                 ]
             
             

@@ -19,6 +19,19 @@ class CategoryType extends GraphQLType
     
     public function fields()
     {
+
+        $paginationType = new ObjectType([
+            'name' => 'CategoryPagination',
+            'description' => 'Category pagination data',
+            'fields' => [
+                'totalPages' => [
+                    'type' => Type::int(),
+                ],
+                'total' => [
+                    'type' => Type::int(),
+                ]
+            ]
+        ]);
         
         return [
         "id" => [
@@ -47,6 +60,10 @@ class CategoryType extends GraphQLType
         ],
         "parent" => [
             'type' => Type::nonNull(Type::int())
+        ],
+        'pagination' => [
+            'type' => $paginationType,
+            'description' => 'Total number'
         ]
         ];
     }
